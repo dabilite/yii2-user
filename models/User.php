@@ -127,13 +127,15 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @return mixed return the assigned authorization items of the current user.
-     * @throws \InvalidArgumentException when auth manager is not configured.
+     * Wrapper function to retrieve authorization items of the current user.
+     *
+     * @return mixed return the assigned authorization items of the current user. When no authManager is configured,
+     * it returns an empty array since by definition there are no authorization items for the current (or any) user.
      */
     public function getAuthItems()
     {
         if (!\Yii::$app->authManager) {
-            throw new \InvalidArgumentException('Auth Manager is not configured in application configuration');
+            return [];
         }
 
         return \Yii::$app->authManager->getItemsByUser($this->id);
