@@ -39,8 +39,8 @@ class UserSearch extends Model
     /** @var string */
     public $registration_ip;
 
-    /** @var string in case the yii2-rbac module is used, we can filter users by auth_items in the admin/index view */
-    public $auth_items;
+    /** @var string in case DbManager is used, we can filter users by auth_item in the admin/index view */
+    public $auth_item;
 
     /** @var Finder */
     protected $finder;
@@ -60,7 +60,7 @@ class UserSearch extends Model
     {
         return [
 
-            'fieldsSafe' => [['id', 'username', 'email', 'registration_ip', 'created_at', 'last_login_at', 'auth_items'], 'safe'],
+            'fieldsSafe' => [['id', 'username', 'email', 'registration_ip', 'created_at', 'last_login_at', 'auth_item'], 'safe'],
             'createdDefault' => ['created_at', 'default', 'value' => null],
             'lastloginDefault' => ['last_login_at', 'default', 'value' => null],
         ];
@@ -97,9 +97,10 @@ class UserSearch extends Model
             return $dataProvider;
         }
 
-        if ($this->auth_items) {
-            $query->leftJoin('auth_assignment', 'auth_assignment.user_id = user.id');
-            $query->andFilterWhere(['item_name' => $this->auth_items]);
+        if (\Yii::$app->authManager instanceof yii\rbac\DbManager && $this->auth_item) {
+            $assignment_table = \Yii::$app->authManager->assignmentTable;
+            $query->leftJoin($assignment_table, $assignment_table.'.user_id = user.id');
+            $query->andFilterWhere(['item_name' => $this->auth_item]);
         }
 
         $table_name = $query->modelClass::tableName();

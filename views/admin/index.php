@@ -75,15 +75,19 @@ $this->params['breadcrumbs'][] = $this->title;
           },
         ],
         [
-            'attribute' => 'auth_items',
+            'attribute' => 'auth_item',
             'format' => 'html',
             'value' => function ($data) {
                 return implode(', ', array_map(function ($ai) {
                     return $ai->name;
                 }, $data->authItems));
             },
-            'filter' => ArrayHelper::map(Yii::$app->db->createCommand('select name from auth_item')->queryAll(), 'name', 'name'),
-            'visible' => Yii::$app->hasModule('rbac'),
+            'filter' => \Yii::$app->authManager instanceof yii\rbac\DbManager ? ArrayHelper::map(array_merge(
+                Yii::$app->authManager->getRoles(),
+                Yii::$app->authManager->getPermissions()
+            ),
+                'name', 'name') : null,
+            'visible' => Yii::$app->get('authManager') instanceof yii\rbac\ManagerInterface,
         ],
         [
             'header' => Yii::t('user', 'Confirmation'),
