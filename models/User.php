@@ -134,11 +134,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getAuthItems()
     {
-        if (!\Yii::$app->authManager) {
-            return [];
-        }
-
-        return \Yii::$app->authManager->getItemsByUser($this->id);
+        return \Yii::$app->authManager ? \Yii::$app->authManager->getItemsByUser($this->id) : [];
     }
 
     /**
