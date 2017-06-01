@@ -17,8 +17,7 @@ class ActiveFixture extends \yii\test\ActiveFixture
      */
     protected function resetTable()
     {
-//        parent::resetTable();
-        \Yii::info("Cleaing table");
+        \Yii::info("Cleaning table");
         $table = $this->getTableSchema();
         $this->db->createCommand()->delete($table->fullName)->execute();
     }
