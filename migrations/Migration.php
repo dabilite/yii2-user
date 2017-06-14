@@ -122,20 +122,6 @@ class Migration extends \yii\db\Migration
             $this->execute('ALTER TABLE '.Yii::$app->db->quoteTableName($c['tbl']).' DROP CONSTRAINT '.Yii::$app->db->quoteColumnName($c['name']));
         }
 
-        // checking for indexes
-        $cmd = Yii::$app->db->createCommand('SELECT ind.name FROM sys.indexes ind
-                                                INNER JOIN sys.index_columns ic
-                                                    ON  ind.object_id = ic.object_id and ind.index_id = ic.index_id
-                                                INNER JOIN sys.columns col
-                                                    ON ic.object_id = col.object_id and ic.column_id = col.column_id
-                                                WHERE ind.object_id = object_id(:table)
-                                                AND col.name = :column',
-                                [ ':table' => $table, ':column' => $column ]);
-
-        $indexes = $cmd->queryAll();
-        foreach ($indexes as $i) {
-            $this->dropIndex($i['name'],$table);
-        }
     }
 
 }
