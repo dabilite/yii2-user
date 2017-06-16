@@ -78,13 +78,13 @@ class Migration extends \yii\db\Migration
     {
         $table = $this->db->schema->getRawTableName($table);
         $cmd = $this->db->createCommand('SELECT name FROM sys.default_constraints
-                                WHERE parent_object_id = object_id(:table)
+                                WHERE parent_object_id = object_id(:table_1)
                                 AND type = \'D\' AND parent_column_id = (
                                     SELECT column_id
                                     FROM sys.columns
-                                    WHERE object_id = object_id(:table)
+                                    WHERE object_id = object_id(:table_2)
                                           AND name = :column
-                                )', [ ':table' => $table, ':column' => $column ]);
+                                )', [ ':table_1' => $table, ':table_2' => $table, ':column' => $column ]);
 
         $constraints = $cmd->queryAll();
         foreach ($constraints as $c) {
