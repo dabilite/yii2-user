@@ -12,6 +12,7 @@
 
 /**
  * @var dektrium\user\models\User $user
+ * @var bool $showPassword
  */
 ?>
 <?= Yii::t('user', 'Hello') ?>,
@@ -19,7 +20,7 @@
 <?= Yii::t('user', 'Your account on {0} has been created', Yii::$app->name) ?>.
 <?= Yii::t('user', 'Your username is') ?>:
 <?= $user->username?>
-<?php if ($module->enableGeneratingPassword): ?>
+<?php if ($showPassword || $module->enableGeneratingPassword): ?>
 <?= Yii::t('user', 'We have generated a password for you') ?>:
 <?= $user->password ?>
 <?php endif ?>
