@@ -75,7 +75,7 @@ class SettingsForm extends Model
             'usernameTrim' => ['username', 'trim'],
             'usernameRequired' => ['username', 'required'],
             'usernameLength'   => ['username', 'string', 'min' => 3, 'max' => 255],
-            'usernamePattern' => ['username', 'match', 'pattern' => '/^[-a-zA-Z0-9_\.@]+$/'],
+            'usernamePattern' => ($this->module->emailAsUsername ? ['username', 'email'] : ['username', 'match', 'pattern' => '/^[-a-zA-Z0-9_\.@]+$/']),
             'emailTrim' => ['email', 'trim'],
             'emailRequired' => ['email', 'required'],
             'emailPattern' => ['email', 'email'],
@@ -107,6 +107,13 @@ class SettingsForm extends Model
     public function formName()
     {
         return 'settings-form';
+    }
+
+    public function beforeValidate() {
+        if ($this->module->emailAsUsername) {
+            $this->username = $this->email;
+        }
+        return parent::beforeValidate();
     }
 
     /**

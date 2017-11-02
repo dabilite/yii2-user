@@ -238,7 +238,7 @@ class User extends ActiveRecord implements IdentityInterface
             // username rules
             'usernameTrim'     => ['username', 'trim'],
             'usernameRequired' => ['username', 'required', 'on' => ['register', 'create', 'connect', 'update']],
-            'usernameMatch'    => ['username', 'match', 'pattern' => static::$usernameRegexp],
+            'usernameMatch'    => ($this->module->emailAsUsername ? ['username', 'email'] : ['username', 'match', 'pattern' => static::$usernameRegexp]),
             'usernameLength'   => ['username', 'string', 'min' => 3, 'max' => 255],
             'usernameUnique'   => [
                 'username',
@@ -267,6 +267,19 @@ class User extends ActiveRecord implements IdentityInterface
     public function validateAuthKey($authKey)
     {
         return $this->getAttribute('auth_key') === $authKey;
+    }
+
+    /**
+     * This method is invoked before validation starts.
+     * If emailAsUsername setting is true, it copies email to username
+     *
+     * @return bool
+     */
+    public function beforeValidate() {
+        if ($this->module->emailAsUsername) {
+            $this->username = $this->email;
+        }
+        return parent::beforeValidate();
     }
 
     /**

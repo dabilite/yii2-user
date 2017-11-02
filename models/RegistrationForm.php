@@ -49,7 +49,7 @@ class RegistrationForm extends Model
             // username rules
             'usernameTrim'     => ['username', 'trim'],
             'usernameLength'   => ['username', 'string', 'min' => 3, 'max' => 255],
-            'usernamePattern'  => ['username', 'match', 'pattern' => $user::$usernameRegexp],
+            'usernamePattern'  => ($this->module->emailAsUsername ? ['username', 'email'] : ['username', 'match', 'pattern' => $user::$usernameRegexp]),
             'usernameRequired' => ['username', 'required'],
             'usernameUnique'   => [
                 'username',
@@ -92,6 +92,13 @@ class RegistrationForm extends Model
     {
         return 'register-form';
     }
+
+	public function beforeValidate() {
+		if ($this->module->emailAsUsername) {
+			$this->username = $this->email;
+		}
+	    return parent::beforeValidate();
+	}
 
     /**
      * Registers a new user account. If registration was successful it will set flash message.
